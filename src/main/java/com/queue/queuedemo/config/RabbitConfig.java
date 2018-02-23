@@ -7,10 +7,11 @@ import org.springframework.cloud.config.java.AbstractCloudConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ComponentScan
-//@Profile("cloud")
+@Profile("cloud")
 public class RabbitConfig extends AbstractCloudConfig {
 
 	@Bean

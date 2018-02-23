@@ -5,15 +5,18 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.queue.queuedemo.domain.Message;
 
 
 
 
-@Controller
+@RestController
+
 public class QueueController {
 	 @Autowired
 		private RabbitTemplate rabbitTemplate;
@@ -25,24 +28,22 @@ public class QueueController {
 	        return "home";
 	    }
 	  // @Scheduled(fixedDelay = 1000, initialDelay = 500)
-	    @RequestMapping(value = "/publish", method=RequestMethod.POST)
-	    public String publish(Model model, Message message) {
+	    @RequestMapping(value = "/msgsend", method=RequestMethod.POST)
+	    public String publish(@RequestBody Message message) {
 	        // Send a message to the "messages" queue
 	    	rabbitTemplate.convertAndSend("test", message.getValue());
-	        model.addAttribute("published", true);
-	        return home(model);
+	       // model.addAttribute("published", true);
+	        return "send successful";
 	    }
 
-	    @RequestMapping(value = "/get", method=RequestMethod.POST)
-	    public String get(Model model) {
+	    @RequestMapping(value = "/msgreceive", method=RequestMethod.GET)
+	    public String get() {
 	        // Receive a message from the "messages" queue
 	        String message = (String)rabbitTemplate.receiveAndConvert("test");
 	        if (message != null)
-	            model.addAttribute("got", message);
+	        	return message;
 	        else
-	            model.addAttribute("got_queue_empty", true);
-
-	        return home(model);
+	           return "not received";
 	    }
 	    
 	    
